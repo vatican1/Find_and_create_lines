@@ -1,7 +1,3 @@
-#include "Sobel.h"
-#include "opencv2/opencv.hpp"
+#include "TrackbarsData.h"
 
-void sobel(cv::Mat src){
-    SobelData data();
-    // cv::Sobel(src,dst, )
-}
+

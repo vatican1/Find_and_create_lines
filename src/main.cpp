@@ -3,34 +3,62 @@
 #include "opencv2/imgcodecs.hpp"
 #include "opencv2/imgproc.hpp"
 #include "opencv2/highgui.hpp"
+#include "TrackbarsData.h"
 
-#include "Gaussian_blur.h"
-#include "Sobel.h"
+#include "./Tests.h"
+#include "./RemovingExtraLines.h"
 
-void redraw(){
 
+
+void redraw(const cv::Mat &grad, const char windowName[]) {
+    cv::Mat dst, cdst, cdstP;
+
+    Canny(grad, dst, 50, 200, 3);
+    // Copy edges to the images that will display the results in BGR
+    cvtColor(dst, cdst, cv::COLOR_GRAY2BGR);
+    cdstP = cdst.clone();
+    cv::Mat cdstP2 = cdst.clone();
+
+    // Probabilistic Line Transform
+    std::vector<cv::Vec4i> linesP; // will hold the results of the detection
+    HoughLinesP(dst, linesP, 1, CV_PI / 180, 50, 50, 10); // runs the actual detection
+
+
+    // Рисование линий
+    for (size_t i = 0; i < linesP.size(); i++) {
+        cv::Vec4i l = linesP[i];
+        line(cdstP, cv::Point(l[0], l[1]), cv::Point(l[2], l[3]), cv::Scalar(0, 0, 255), 1, cv::LINE_AA);
+    }
+    cv::namedWindow(windowName, cv::WINDOW_NORMAL);
+
+    imshow(windowName, cdstP);
+
+    deleteExtraLines(linesP);
+
+    for (size_t i = 0; i < linesP.size(); i++) {
+        cv::Vec4i l = linesP[i];
+        line(cdstP2, cv::Point(l[0], l[1]), cv::Point(l[2], l[3]), cv::Scalar(0, 0, 255), 1, cv::LINE_AA);
+    }
+
+    cv::namedWindow("delete", cv::WINDOW_NORMAL);
+
+    imshow("delete", cdstP2);
 }
 
 int main() {
-    cv::Mat src1 = cv::imread("data/Helsinki_1.JPEG");
-    cv::Mat src2 = cv::imread("data/Helsinki_2.JPEG");
-    if (src1.empty()) {
+    cv::Mat src = cv::imread("data/Helsinki_1.JPEG");
+    if (src.empty()) {
         std::cout << "Error loading src1 \n";
         return -1;
     }
-    if (src2.empty()) {
-        std::cout << "Error loading src2 \n";
-        return -1;
-    }
+
 
     namedWindow("My Window", cv::WINDOW_NORMAL);
-
-    auto* data = new GaussianBlurData(0, 1, &src1);
-
+    auto *data = new GaussianBlurData(0, 1, &src);
     cv::createTrackbar("Gaussian blur sigma", "My Window", &data->sigma, 100,
-                       MyCallbackForGaussianBlurSigma, data);
+                       GaussianBlurData::MyCallbackForGaussianBlurSigma, data);
     cv::createTrackbar("Gaussian blur kSize", "My Window", &data->kSize, 10,
-                       MyCallbackForGaussianBlurKSizeXY, data);
+                       GaussianBlurData::MyCallbackForGaussianBlurKSizeXY, data);
 
     cv::Mat srcBlurGray1;
     while (true) {
@@ -44,20 +72,20 @@ int main() {
         cv::Sobel(srcBlurGray1, grad_x, CV_16S, 1, 0);
         cv::Sobel(srcBlurGray1, grad_y, CV_16S, 0, 1);
 
-        convertScaleAbs(grad_x, abs_grad_x);
-        convertScaleAbs(grad_y, abs_grad_y);
-        addWeighted(abs_grad_x, 0.5, abs_grad_y, 0.5, 0, grad);
+        convertScaleAbs(grad_x, abs_grad_x);// пойми что это
+        convertScaleAbs(grad_y, abs_grad_y);// пойми что это
+        addWeighted(abs_grad_x, 0.5, abs_grad_y, 0.5, 0, grad);// тут логично рисуется картинка с общим градиентом.
 
-        cv::namedWindow("Sobel_dx", cv::WINDOW_NORMAL);
-        cv::namedWindow("Sobel_dy", cv::WINDOW_NORMAL);
-        imshow("Sobel_dx", abs_grad_x);
-        imshow("Sobel_dy", abs_grad_y);
 
-        cv::namedWindow("Sobel", cv::WINDOW_NORMAL);
-        imshow("Sobel", grad);
+        redraw(grad, "grad");
+       // redraw(abs_grad_x, "abs_grad_x");
+        //redraw(abs_grad_y, "abs_grad_y");
 
         cv::waitKey(0);
     }
 
     return 0;
 }
+
+
+
