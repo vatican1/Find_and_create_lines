@@ -19,7 +19,9 @@ void GaussianBlurData::redraw() {
         cv::GaussianBlur(*src, dst, this->getKSize(), this->getSigma());
         imshow("My Window", dst);
     } else {
-        imshow("My Window", *src);
+        dst = src->clone();
+        imshow("My Window", dst);
+
     }
 }
 

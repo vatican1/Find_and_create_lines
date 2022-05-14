@@ -22,17 +22,6 @@ public:
     static void MyCallbackForGaussianBlurKSizeXY(int kSizeXY, void *userData);
 };
 
-class SobelDta{
-public:
-    cv::Mat* src;
-    cv::Mat dst;
-    int ddepth;
-
-
-    static void MyCallbackForSobelDdepth(int ddepth, void* userData);
-    static void MyCallbackForKsize(int kSizeXY, void *userData);
-
-};
 
 
 

@@ -6,7 +6,6 @@
 
 # include "./RemovingExtraLines.h"
 
-
 std::pair<cv::Point, bool> findIntersectionPoint(const cv::Vec4i &line1, const cv::Vec4i &line2) {
     float x1 = line1[0];
     float y1 = line1[1];
@@ -33,18 +32,31 @@ cv::Point fingIntersectPointOfAllLines(std::vector<cv::Vec4i> &lines) {
     //  создали массив точек, подозрительных на точку пересечения линий перспективы
     std::map<std::pair<int, int>, int> pointMap;
     //всё кроме этого работает бывстро, надо успростить!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    for (int i = 0; i < lines.size(); i += 5) {
-        for (int j = i; j < lines.size(); j += 10) {
-            std::pair<cv::Point, int> point_b = findIntersectionPoint(lines[i], lines[j]);
-            if (!point_b.second)
+    for (int i = 0; i < lines.size(); i += 3) {
+        for (int j = i; j < lines.size(); j += 3) {
+            float x1 = lines[i][0];
+            float y1 = lines[i][1];
+            float x2 = lines[i][2];
+            float y2 = lines[i][3];
+
+            float x3 = lines[j][0];
+            float y3 = lines[j][1];
+            float x4 = lines[j][2];
+            float y4 = lines[j][3];
+
+            if ((x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4) < 0.1)
                 continue;
 
-            if (pointMap.find(std::make_pair(point_b.first.x, point_b.first.y)) == pointMap.end())
-                pointMap[std::make_pair(point_b.first.x, point_b.first.y)] = 1;
+            float px = ((x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4)) /
+                       ((x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4));
+            float py = ((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4)) /
+                       ((x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4));
+
+            if (pointMap.find(std::make_pair(px, py)) == pointMap.end())
+                pointMap[std::make_pair(px, py)] = 1;
             else
-                pointMap[std::make_pair(point_b.first.x, point_b.first.y)]++;
+                pointMap[std::make_pair(px, py)]++;
         }
-//        std::cout << i<< std::endl;
     }
 
     // Возможно стоит проредить точки, расположенные рядом, пока не будем
@@ -61,7 +73,7 @@ cv::Point fingIntersectPointOfAllLines(std::vector<cv::Vec4i> &lines) {
     return bestPoint;
 }
 
-float distanceBetweenPointAndLine(const cv::Point &point, const cv::Vec4i &line) {
+float inline distanceBetweenPointAndLine(const cv::Point &point, const cv::Vec4i &line) {
     float x1 = line[0];
     float y1 = line[1];
     float x2 = line[2];
@@ -74,7 +86,7 @@ float distanceBetweenPointAndLine(const cv::Point &point, const cv::Vec4i &line)
     return d;
 }
 
-void deleteExtraLines(std::vector<cv::Vec4i> &lines) {
+cv::Point deleteExtraLines(std::vector<cv::Vec4i> &lines) {
 
     cv::Point bestPoint = fingIntersectPointOfAllLines(lines);
     int linesSize = lines.size();
@@ -87,7 +99,7 @@ void deleteExtraLines(std::vector<cv::Vec4i> &lines) {
 
     int deleted = 0;
     for (auto it = lines.begin(); it != lines.end();) {
-        if (distanceBetweenPointAndLine(bestPoint, *it) > avg * 10 ) {
+        if (distanceBetweenPointAndLine(bestPoint, *it) > avg/5 ) {
             it = lines.erase(it);
             deleted++;
         } else {
@@ -95,4 +107,5 @@ void deleteExtraLines(std::vector<cv::Vec4i> &lines) {
         }
     }
     std::cout << "i delete " << deleted << " out of " << linesSize << " liness" << std::endl;
+    return bestPoint;
 }
