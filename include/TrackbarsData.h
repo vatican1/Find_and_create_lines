@@ -6,13 +6,15 @@
 
 class GaussianBlurData {
 public:
-    cv::Mat* src;
+    cv::Mat *src;
     cv::Mat dst;
     int sigma, kSize;
+    std::string winName;
 
-    GaussianBlurData(int sigma, int kSize, cv::Mat *src);
+    GaussianBlurData(int sigma, int kSize, cv::Mat *src, std::string winName);
 
     cv::Size getKSize();
+
     double getSigma();
 
     void redraw();
@@ -21,8 +23,6 @@ public:
 
     static void MyCallbackForGaussianBlurKSizeXY(int kSizeXY, void *userData);
 };
-
-
 
 
 #endif

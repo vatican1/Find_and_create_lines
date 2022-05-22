@@ -1,8 +1,12 @@
 
 #include "opencv2/opencv.hpp"
 #include "TrackbarsData.h"
+#include "mainInclude.h"
 
-GaussianBlurData::GaussianBlurData(int sigma, int kSize, cv::Mat *src) : sigma(sigma), kSize(kSize), src(src) {
+
+GaussianBlurData::GaussianBlurData(int sigma, int kSize, cv::Mat *src, std::string winName) : sigma(sigma),
+                                                                                              kSize(kSize), src(src),
+                                                                                              winName(winName) {
     dst = src->clone();
 }
 
@@ -17,24 +21,24 @@ double GaussianBlurData::getSigma() {
 void GaussianBlurData::redraw() {
     if (sigma != 0 && kSize != 0) {
         cv::GaussianBlur(*src, dst, this->getKSize(), this->getSigma());
-        imshow("My Window", dst);
+        imshow("Blur", dst);
     } else {
         dst = src->clone();
-        imshow("My Window", dst);
+        imshow("Blur", dst);
 
     }
 }
 
 
 void GaussianBlurData::MyCallbackForGaussianBlurSigma(int sigmaTrackbar, void *userData) {
-    auto data = *(static_cast<GaussianBlurData *>(userData));
-
+    auto data = *(static_cast<AllTransforms *>(userData));
     data.redraw();
 }
 
 void GaussianBlurData::MyCallbackForGaussianBlurKSizeXY(int kSizeXY, void *userData) {
-    auto data = *(static_cast<GaussianBlurData *>(userData));
-
+    auto data = *(static_cast<AllTransforms *>(userData));
     data.redraw();
 }
+
+
 

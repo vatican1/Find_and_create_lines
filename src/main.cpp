@@ -8,6 +8,7 @@
 
 #include "./Tests.h"
 #include "./RemovingExtraLines.h"
+#include "mainInclude.h"
 
 
 void HoughLinesDraw(const cv::Mat &grad, const std::string &windowName) {
@@ -40,70 +41,7 @@ void HoughLinesDraw(const cv::Mat &grad, const std::string &windowName) {
     imshow(windowName, cdstP);
 }
 
-enum class Operators {
-    SOBEL,
-    LAPLACIAN,
-    CANNY
-};
 
-struct SobelData {
-    int dx; // порядок производной
-    int dy;
-    int ksize; // размер матрицы оператора - только 1, 3, 5, 7
-//    double scale; // коэффициент масштабирования для вычисления производной.
-//    double delta; //  прибавляется к итоговому значению
-};
-
-struct LaplacianData {
-    int ksize; //
-};
-
-struct CannyData {
-    double threshold1;
-    double threshold2;
-    int apertureSize;
-    bool L2gradient;
-};
-
-cv::Mat applyEdgeDetectOperator(const cv::Mat &src, Operators op, void *data) {
-    cv::Mat srcBlurGray;
-    cv::cvtColor(src, srcBlurGray, cv::COLOR_BGR2GRAY);
-
-
-    std::string windowName;
-    cv::Mat grad;
-    switch (op) {
-        case Operators::SOBEL: {
-            auto *castData = static_cast<SobelData *>(data);
-            windowName = "Sobel dx = " + std::to_string(castData->dx) + " dy = " + std::to_string(castData->dy) +
-                         " ksize = " + std::to_string(castData->ksize);
-            cv::Sobel(srcBlurGray, grad, CV_16S, castData->dx, castData->dy, castData->ksize);
-            break;
-        }
-        case Operators::LAPLACIAN: {
-            auto *castData = static_cast<LaplacianData *>(data);
-            windowName = "Laplacian ksize = " + std::to_string(castData->ksize);
-            cv::Laplacian(srcBlurGray, grad, CV_16S, castData->ksize);
-            break;
-        }
-        case Operators::CANNY: {
-            auto *castData = static_cast<CannyData *>(data);
-            windowName = "Canny threshold1 = " + std::to_string(castData->threshold1) +
-                         " threshold2 = " + std::to_string(castData->threshold2) + " apertureSize = " +
-                         std::to_string(castData->apertureSize) + " L2gradient = " +
-                         std::to_string(castData->L2gradient);
-            cv::Canny(srcBlurGray, grad, castData->threshold1, castData->threshold2, castData->apertureSize,
-                      castData->L2gradient);
-            break;
-        }
-    }
-
-    cv::Mat abs_grad;
-    cv::convertScaleAbs(grad, abs_grad);
-    cv::namedWindow(windowName, cv::WINDOW_NORMAL);
-    cv::imshow(windowName, abs_grad);
-    return abs_grad;
-}
 
 
 int main() {
@@ -116,26 +54,26 @@ int main() {
     }
 
 
-    namedWindow("My Window", cv::WINDOW_NORMAL);
-    auto *data = new GaussianBlurData(15, 40, &src);
-    cv::createTrackbar("Gaussian blur sigma", "My Window", &data->sigma, 100,
-                       GaussianBlurData::MyCallbackForGaussianBlurSigma, data);
-    cv::createTrackbar("Gaussian blur kSize", "My Window", &data->kSize, 60,
-                       GaussianBlurData::MyCallbackForGaussianBlurKSizeXY, data);
+    AllTransforms a(src);
+
+    cv::createTrackbar("Gaussian blur sigma", a.gaussianBlurData.winName, &a.gaussianBlurData.sigma, 100,
+                       GaussianBlurData::MyCallbackForGaussianBlurSigma, &a);
+    cv::createTrackbar("Gaussian blur kSize", a.gaussianBlurData.winName, &a.gaussianBlurData.kSize, 60,
+                       GaussianBlurData::MyCallbackForGaussianBlurKSizeXY, &a);
 
 
-    cv::Mat srcBlurGray1;
-    while (true) {
-        SobelData operatorData1 = {1, 0, 3};
-        applyEdgeDetectOperator(data->dst, Operators::SOBEL, &operatorData1);
+//    SobelData operatorData1 = {1, 0, 3};
+//    applyEdgeDetectOperator(data->dst, dst, Operators::SOBEL, &operatorData1);
 
-        LaplacianData operatorData2 = {3};
-        applyEdgeDetectOperator(data->dst, Operators::LAPLACIAN, &operatorData2);
 
-        CannyData operatorData3 = {10, 100, 3, false};
-        applyEdgeDetectOperator(data->dst, Operators::CANNY, &operatorData3);
-        cv::waitKey(0);
-    }
+//    LaplacianData operatorData2 = {3};
+//    applyEdgeDetectOperator(data->dst, Operators::LAPLACIAN, &operatorData2);
+//
+//    CannyData operatorData3 = {10, 100, 3, false};
+//    applyEdgeDetectOperator(data->dst, Operators::CANNY, &operatorData3);
+
+    cv::waitKey(0);
+
 
     return 0;
 }
