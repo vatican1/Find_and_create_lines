@@ -3,7 +3,7 @@
 
 #include "opencv2/imgproc.hpp"
 #include "opencv2/highgui.hpp"
-#include "TrackbarsData.h"
+#include "BlureData.h"
 
 void testIntersectionPoint() {
     cv::Mat src(600, 600, CV_8UC1, cv::Scalar(255, 255, 255));
