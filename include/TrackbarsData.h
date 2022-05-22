@@ -11,6 +11,8 @@ public:
     int sigma, kSize;
     std::string winName;
 
+    GaussianBlurData();
+
     GaussianBlurData(int sigma, int kSize, cv::Mat *src, std::string winName);
 
     cv::Size getKSize();

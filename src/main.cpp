@@ -6,9 +6,10 @@
 #include "opencv2/highgui.hpp"
 #include "TrackbarsData.h"
 
-#include "./Tests.h"
-#include "./RemovingExtraLines.h"
-#include "mainInclude.h"
+#include "Tests.h"
+#include "RemovingExtraLines.h"
+#include "AllFilters.h"
+#include "EdgeDetector.h"
 
 
 void HoughLinesDraw(const cv::Mat &grad, const std::string &windowName) {
@@ -42,8 +43,6 @@ void HoughLinesDraw(const cv::Mat &grad, const std::string &windowName) {
 }
 
 
-
-
 int main() {
     std::string picturesNames[] = {"Helsinki_1.JPEG", "Helsinki_2.JPEG", "Saint-Petersburg_1.JPEG",
                                    "Saint-Petersburg_2.JPEG", "Saint-Petersburg_3.JPEG", "Tbilisi_1.JPEG"};
@@ -62,15 +61,6 @@ int main() {
                        GaussianBlurData::MyCallbackForGaussianBlurKSizeXY, &a);
 
 
-//    SobelData operatorData1 = {1, 0, 3};
-//    applyEdgeDetectOperator(data->dst, dst, Operators::SOBEL, &operatorData1);
-
-
-//    LaplacianData operatorData2 = {3};
-//    applyEdgeDetectOperator(data->dst, Operators::LAPLACIAN, &operatorData2);
-//
-//    CannyData operatorData3 = {10, 100, 3, false};
-//    applyEdgeDetectOperator(data->dst, Operators::CANNY, &operatorData3);
 
     cv::waitKey(0);
 

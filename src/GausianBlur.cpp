@@ -1,7 +1,7 @@
 
 #include "opencv2/opencv.hpp"
 #include "TrackbarsData.h"
-#include "mainInclude.h"
+#include "AllFilters.h"
 
 
 GaussianBlurData::GaussianBlurData(int sigma, int kSize, cv::Mat *src, std::string winName) : sigma(sigma),
@@ -38,6 +38,10 @@ void GaussianBlurData::MyCallbackForGaussianBlurSigma(int sigmaTrackbar, void *u
 void GaussianBlurData::MyCallbackForGaussianBlurKSizeXY(int kSizeXY, void *userData) {
     auto data = *(static_cast<AllTransforms *>(userData));
     data.redraw();
+}
+
+GaussianBlurData::GaussianBlurData() {
+
 }
 
 

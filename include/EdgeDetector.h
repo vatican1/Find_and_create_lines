@@ -36,7 +36,9 @@ struct EdgeDetector {
         bool L2gradient;
     };
 
-    EdgeDetector(cv::Mat *src);
+    explicit EdgeDetector(cv::Mat *src);
+
+    EdgeDetector();
 
     cv::Mat applyEdgeDetectOperator(Operators op, void *data);
 
