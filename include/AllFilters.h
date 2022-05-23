@@ -22,6 +22,7 @@ struct AllTransforms {
 
         cv::createTrackbar("Gaussian blur kSize", gaussianBlurData.winName, &gaussianBlurData.kSize, 60,
                            GaussianBlurData::MyCallbackForGaussianBlurKSizeXY, this);
+        gaussianBlurData.redraw();
 
 //        EdgeDetector::LaplacianData operatorData2 = {3};
 //        EdgeDetector::CannyData operatorData3 = {10, 100, 3, false};
@@ -30,6 +31,8 @@ struct AllTransforms {
         edgeDetector.applyAndFirstDraw();
 
         houghLines = HoughLines(&edgeDetector.dst, "houghT");
+        houghLines.CreateHoughLines(src_);
+//        houghLines.redraw();
 
 
         init = true;
@@ -41,7 +44,7 @@ struct AllTransforms {
             gaussianBlurData.redraw();
             edgeDetector.applyEdgeDetectOperator();
             edgeDetector.redraw();
-            houghLines.CreateHoughLines();
+            houghLines.CreateHoughLines(src_);
 //            houghLines.redraw();
         }
 

@@ -9,9 +9,6 @@
 #include "AllFilters.h"
 
 
-
-
-
 int main() {
     std::string picturesNames[] = {"Helsinki_1.JPEG", "Helsinki_2.JPEG", "Saint-Petersburg_1.JPEG",
                                    "Saint-Petersburg_2.JPEG", "Saint-Petersburg_3.JPEG", "Tbilisi_1.JPEG"};
@@ -21,14 +18,12 @@ int main() {
         return -1;
     }
 
-
     AllTransforms a(src);
-
-
-
-
-
     cv::waitKey(0);
+
+    while (true) {
+        
+    }
 
 
     return 0;
