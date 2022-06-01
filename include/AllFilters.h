@@ -12,6 +12,8 @@ struct AllTransforms {
     HoughLines houghLines;
     bool init = false;
     cv::Point point;
+    cv::Point proposed_center;
+
 
     AllTransforms(cv::Mat &src) : src_(src) {
 
