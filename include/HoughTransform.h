@@ -16,7 +16,7 @@ struct HoughLines {
 
     HoughLines();
 
-    void CreateHoughLines(cv::Mat &ImgWhereDraw);
+    cv::Point CreateHoughLines(cv::Mat &ImgWhereDraw);
 
     void redraw();
 };

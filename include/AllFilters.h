@@ -11,6 +11,7 @@ struct AllTransforms {
     EdgeDetector edgeDetector;
     HoughLines houghLines;
     bool init = false;
+    cv::Point point;
 
     AllTransforms(cv::Mat &src) : src_(src) {
 
@@ -31,7 +32,7 @@ struct AllTransforms {
         edgeDetector.applyAndFirstDraw();
 
         houghLines = HoughLines(&edgeDetector.dst, "houghT");
-        houghLines.CreateHoughLines(src_);
+        point = houghLines.CreateHoughLines(src_);
 //        houghLines.redraw();
 
 
@@ -44,7 +45,7 @@ struct AllTransforms {
             gaussianBlurData.redraw();
             edgeDetector.applyEdgeDetectOperator();
             edgeDetector.redraw();
-            houghLines.CreateHoughLines(src_);
+            point = houghLines.CreateHoughLines(src_);
 //            houghLines.redraw();
         }
 
