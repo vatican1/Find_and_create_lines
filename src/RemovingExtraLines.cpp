@@ -86,7 +86,7 @@ float inline distanceBetweenPointAndLine(const cv::Point &point, const cv::Vec4i
     return d;
 }
 
-cv::Point deleteExtraLines(std::vector<cv::Vec4i> &lines) {
+cv::Point deleteExtraLines(std::vector<cv::Vec4i> &lines, cv::Point centrePoint) {
 
     cv::Point bestPoint = fingIntersectPointOfAllLines(lines);
     int linesSize = lines.size();
@@ -99,7 +99,7 @@ cv::Point deleteExtraLines(std::vector<cv::Vec4i> &lines) {
 
     int deleted = 0;
     for (auto it = lines.begin(); it != lines.end();) {
-        if (distanceBetweenPointAndLine(bestPoint, *it) > avg/5 ) {
+        if (distanceBetweenPointAndLine(bestPoint, *it) > avg / 5) {
             it = lines.erase(it);
             deleted++;
         } else {

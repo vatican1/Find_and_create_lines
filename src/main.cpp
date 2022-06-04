@@ -65,20 +65,20 @@ void MouseCallBackPaint(int event, int x, int y, int flags, void *userdata) {
             cv::line(*data->tmp, data->points[1], data->points[3], cv::Scalar(30, 30, 255), 1, cv::LINE_AA);
             Fillquadrangle(data->points, data->tmp, cv::Vec3b(30, 30, 255));
 
-            int amount = 20;
-            int _1_width = 10;
+            int amount = 100;
+            int _1_width = 15;
             int _1_height = 10;
 
             for (int i = 1; i < amount + 1; i += 2) {
                 cv::Point new_points[4];
                 int stepy = abs(data->points[0].y - data->points[2].y) / amount;
 
-                int xLnow = dp0x + (dp2x - dp0x) / amount * i;
-                int xRnow = dp1x - (dp1x - dp3x) / amount * i;
+                int xLnow = dp0x + (dp2x - dp0x) * i / amount;
+                int xRnow = dp1x - (dp1x - dp3x) * i / amount;
                 int betweenx = abs(xLnow - xRnow);
 
-                int xLnext = dp0x + (dp2x - dp0x) / amount * (i + 1);
-                int xRnext = dp1x - (dp1x - dp3x) / amount * (i + 1);
+                int xLnext = dp0x + (dp2x - dp0x) * (i + 1) / amount;
+                int xRnext = dp1x - (dp1x - dp3x) * (i + 1) / amount;
                 int betweenxNext = abs(xLnext - xRnext);
 
                 int indentxnow = betweenx * (_1_width - 1) / (2 * _1_width);
@@ -93,18 +93,22 @@ void MouseCallBackPaint(int event, int x, int y, int flags, void *userdata) {
                 Fillquadrangle(new_points, data->tmp, cv::Vec3b(200, 200, 200));
 
             }
+            cv::imwrite("data_mod/PaintSPB3.JPG", *data->tmp);
         }
         if (data->bp2) {
             data->points[1] = cv::Point(x, y);
             data->bp2 = false;
             data->bp3 = true;
             cv::line(*data->tmp, data->points[1], data->main_point, cv::Scalar(0, 0, 255), 1, cv::LINE_AA);
+            cv::imwrite("data_mod/PaintSPB2.JPG", *data->tmp);
+
         }
         if (data->bp1) {
             data->points[0] = cv::Point(x, y);
             data->bp1 = false;
             data->bp2 = true;
             cv::line(*data->tmp, data->points[0], data->main_point, cv::Scalar(0, 0, 255), 1, cv::LINE_AA);
+            cv::imwrite("data_mod/PaintSPB1.JPG", *data->tmp);
         }
         cv::imshow("Paint", *data->tmp);
 
@@ -116,16 +120,18 @@ void MouseCallBackPaint(int event, int x, int y, int flags, void *userdata) {
 
 int main() {
     std::string picturesNames[] = {"Helsinki_1.JPEG", "Helsinki_2.JPEG", "Saint-Petersburg_1.JPEG",
-                                   "Saint-Petersburg_2.JPEG", "Saint-Petersburg_3.JPEG", "Tbilisi_1.JPEG"};
-    cv::Mat src = cv::imread("data/" + picturesNames[0]);
+                                   "Saint-Petersburg_2.JPEG", "Saint-Petersburg_3.JPEG", "Tbilisi_1.JPEG",
+                                   "SPB_Sennaya.JPEG", "IMG_8751.JPG", "IMG_9184.JPG"};
+    cv::Mat src = cv::imread("data/" + picturesNames[7]);
     if (src.empty()) {
         std::cout << "Error loading src1" << std::endl;
         return -1;
     }
 
     AllTransforms a(src);
-    cv::Point p = a.point;
+
     cv::waitKey(0);
+    cv::Point p = a.point;
     cv::namedWindow("Paint", cv::WINDOW_NORMAL);
     imshow("Paint", src);
     cv::Mat tmp = src.clone();

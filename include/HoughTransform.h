@@ -11,12 +11,13 @@ struct HoughLines {
     std::string windowName;
     cv::Mat *src;
     cv::Mat dst;
+    cv::Point centrePoint;
 
-    HoughLines(cv::Mat *src, std::string windowName);
+    HoughLines(cv::Mat *src, std::string windowName, cv::Point centrePoint);
 
     HoughLines();
 
-    cv::Point CreateHoughLines(cv::Mat &ImgWhereDraw);
+    std::pair<cv::Point, int> CreateHoughLines(cv::Mat &ImgWhereDraw);
 
     void redraw();
 };

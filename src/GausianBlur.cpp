@@ -16,7 +16,7 @@ cv::Size GaussianBlurData::getKSize() {
 }
 
 double GaussianBlurData::getSigma() {
-    return (double) sigma / 10;
+    return (double) sigma / 80;
 }
 
 void GaussianBlurData::redraw() {
@@ -27,6 +27,11 @@ void GaussianBlurData::redraw() {
         dst = src->clone();
         imshow(winName, dst);
     }
+}
+
+void GaussianBlurData::redo() {
+        cv::GaussianBlur(*src, dst, this->getKSize(), this->getSigma());
+
 }
 
 

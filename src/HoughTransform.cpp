@@ -2,21 +2,21 @@
 #include "HoughTransform.h"
 
 
-//void HoughLines::redraw() {
-//    cv::namedWindow(windowName, cv::WINDOW_NORMAL);
-//    imshow(windowName, dst);
-//}
+void HoughLines::redraw() {
+    cv::namedWindow(windowName, cv::WINDOW_NORMAL);
+    imshow(windowName, dst);
+}
 
-cv::Point HoughLines::CreateHoughLines(cv::Mat &ImgWhereDraw) {
+std::pair<cv::Point, int> HoughLines::CreateHoughLines(cv::Mat &ImgWhereDraw) {
     cv::Mat tmp = src->clone();
     cv::Mat tmp2 = src->clone();
     std::vector<cv::Vec4i> linesP;
     cv::Canny(*src, tmp, 50, 200, 3);
     cv::cvtColor(tmp, tmp2, cv::COLOR_GRAY2BGR);
     HoughLinesP(tmp, linesP, 1, CV_PI / 180, 80, 100, 10); // runs the actual detection
-
+    int num = linesP.size();
     if (!linesP.empty()) {
-        cv::Point point1 = deleteExtraLines(linesP);
+        cv::Point point1 = deleteExtraLines(linesP, this->centrePoint);
         int cirlceSize = std::min(src->size().height, src->size().width) / 10;
         cv::circle(tmp, point1, cirlceSize, cv::Scalar(0, 0, 0), -1);
     }
@@ -25,7 +25,7 @@ cv::Point HoughLines::CreateHoughLines(cv::Mat &ImgWhereDraw) {
     std::vector<cv::Vec4i> linesP2;
     HoughLinesP(tmp, linesP2, 1, CV_PI / 180, 80, 120, 10);
     if (!linesP2.empty()) {
-        cv::Point point2 = deleteExtraLines(linesP2);
+        cv::Point point2 = deleteExtraLines(linesP2, this->centrePoint);
         for (auto l: linesP) {
             cv::line(tmp2, cv::Point(l[0], l[1]), cv::Point(l[2], l[3]), cv::Scalar(0, 0, 255), 1, cv::LINE_AA);
         }
@@ -34,13 +34,15 @@ cv::Point HoughLines::CreateHoughLines(cv::Mat &ImgWhereDraw) {
     }
 
 
-    cv::namedWindow(windowName, cv::WINDOW_NORMAL);
-    imshow(windowName, tmp2);
-    return point_r;
+//    cv::namedWindow(windowName, cv::WINDOW_NORMAL);
+//    imshow(windowName, tmp2);
+    dst = tmp2.clone();
+    return std::make_pair(point_r, num);
 
 }
 
-HoughLines::HoughLines(cv::Mat *src, std::string windowName) : src(src), windowName(windowName), dst(*src) {
+HoughLines::HoughLines(cv::Mat *src, std::string windowName, cv::Point point) : src(src), windowName(windowName),
+                                                                                dst(*src), centrePoint(point) {
 
 }
 

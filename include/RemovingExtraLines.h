@@ -9,4 +9,4 @@ cv::Point fingIntersectPointOfAllLines(const std::vector<cv::Vec4i> &lines);
 
 float distanceBetweenPointAndLine(const cv::Point& point, const cv::Vec4i& line);
 
-cv::Point deleteExtraLines(std::vector<cv::Vec4i> &lines);
+cv::Point deleteExtraLines(std::vector<cv::Vec4i> &lines, cv::Point centrePoint);

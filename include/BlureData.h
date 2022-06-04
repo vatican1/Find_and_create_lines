@@ -21,6 +21,8 @@ public:
 
     void redraw();
 
+    void redo();
+
     static void MyCallbackForGaussianBlurSigma(int sigmaTrackbar, void *userData);
 
     static void MyCallbackForGaussianBlurKSizeXY(int kSizeXY, void *userData);
